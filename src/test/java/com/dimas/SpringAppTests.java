@@ -3,6 +3,7 @@ package com.dimas;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -15,8 +16,11 @@ public class SpringAppTests {
     @Autowired
     private HelloService helloService;
 
+    @Value("${dimas.required}")
+    String hello;
+
     @Test
     public void testSayHello() {
-        assertEquals("Hello world!", helloService.sayHello());
+        assertEquals(hello, helloService.sayHello());
     }
 }
