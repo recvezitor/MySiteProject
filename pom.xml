@@ -10,7 +10,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <log4j.properties.file>logger/log4j.xml</log4j.properties.file>
 
         <junit.version>4.11</junit.version>
         <junit.scope>test</junit.scope>
