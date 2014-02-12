@@ -2,14 +2,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.dimas</groupId>
-    <artifactId>SpringDBI</artifactId>
-    <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
-    <name>SpringDBI</name>
+    <artifactId>DIB</artifactId>
+    <version>0.0.1</version>
+    <packaging>pom</packaging>
+    <name>DIB</name>
     <url>http://maven.apache.org</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <log4j.properties.file>logger/log4j.xml</log4j.properties.file>
 
         <junit.version>4.11</junit.version>
         <junit.scope>test</junit.scope>
@@ -30,26 +31,31 @@
         <maven-surefire-plugin.version>2.15</maven-surefire-plugin.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <!--SpringFramework-->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>${spring.version}</version>
+                <scope>${spring.scope}</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
+                <scope>${spring.scope}</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${spring.version}</version>
+                <scope>${spring-test.scope}</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
-        <!--SpringFramework-->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
-            <scope>${spring.scope}</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
-            <scope>${spring.scope}</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>${spring.version}</version>
-            <scope>${spring-test.scope}</scope>
-        </dependency>
         <!--JUnit-->
         <dependency>
             <groupId>junit</groupId>
@@ -108,4 +114,32 @@
             </plugin>
         </plugins>
     </build>
+
+    <modules>
+        <module>Util</module>
+    </modules>
+
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>Pattern</module>
+                <module>JavaCore</module>
+                <module>SpringCore</module>
+                <module>SpringDBAccess</module>
+                <module>SpringMVC</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>spring</id>
+            <modules>
+                <module>SpringCore</module>
+                <module>SpringDBAccess</module>
+                <module>SpringMVC</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>
