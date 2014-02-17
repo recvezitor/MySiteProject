@@ -6,11 +6,37 @@
     <version>0.0.1</version>
     <packaging>pom</packaging>
     <name>DIB</name>
-    <url>http://maven.apache.org</url>
+
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+    <organization>
+        <name>Dimas and Co</name>
+    </organization>
+    <developers>
+        <developer>
+            <id>dimas</id>
+            <name>Dmitrii Borovoi</name>
+            <email>recvezitor@yandex.ru</email>
+            <organization>Dimas and Co</organization>
+            <roles>
+                <role>business owner</role>
+                <role>developer</role>
+            </roles>
+            <timezone>+11</timezone>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <log4j.properties.file>logger/log4j.xml</log4j.properties.file>
+
+        <cobertura.code.coverage.percents>50</cobertura.code.coverage.percents>
+        <cobertura.haltOnFailure>false</cobertura.haltOnFailure>
 
         <junit.version>4.11</junit.version>
         <junit.scope>test</junit.scope>
@@ -28,11 +54,20 @@
         <maven-compiler-plugin.version>2.5.1</maven-compiler-plugin.version>
         <maven-compiler-plugin.source.version>1.6</maven-compiler-plugin.source.version>
         <maven-compiler-plugin.target.version>1.6</maven-compiler-plugin.target.version>
-        <maven-surefire-plugin.version>2.15</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>2.16</maven-surefire-plugin.version>
+        <cobertura.maven.plugin.version>2.5.2</cobertura.maven.plugin.version>
+        <!--TODO-->
+        <!--<cobertura.maven.plugin.version>2.6</cobertura.maven.plugin.version>-->
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!--com.dimas-->
+            <dependency>
+                <groupId>com.dimas</groupId>
+                <artifactId>Util</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
             <!--SpringFramework-->
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -93,7 +128,7 @@
     </dependencies>
 
     <build>
-        <finalName>MySite</finalName>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -103,43 +138,121 @@
                     <target>${maven-compiler-plugin.target.version}</target>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
-                <configuration>
-                    <includes>
-                        <include>**/*Tests.java</include>
-                    </includes>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
     <modules>
+        <module>Algorithm</module>
         <module>Util</module>
+        <module>Pattern</module>
+        <module>JavaCore</module>
+        <module>SpringCore</module>
+        <module>SpringDBAccess</module>
+        <module>SpringMVC</module>
     </modules>
+
 
     <profiles>
         <profile>
-            <id>default</id>
+            <id>base</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-            <modules>
-                <module>Pattern</module>
-                <module>JavaCore</module>
-                <module>SpringCore</module>
-                <module>SpringDBAccess</module>
-                <module>SpringMVC</module>
-            </modules>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${maven-surefire-plugin.version}</version>
+                        <configuration>
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/*FunctionalTest.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
+
         <profile>
-            <id>spring</id>
-            <modules>
-                <module>SpringCore</module>
-                <module>SpringDBAccess</module>
-                <module>SpringMVC</module>
-            </modules>
+            <!--mvn clean install -P cobertura cobertura:cobertura-->
+            <id>cobertura</id>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>cobertura-maven-plugin</artifactId>
+                        <version>${cobertura.maven.plugin.version}</version>
+                    </plugin>
+                </plugins>
+            </reporting>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${maven-surefire-plugin.version}</version>
+                        <configuration>
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/*FunctionalTest.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>cobertura-maven-plugin</artifactId>
+                        <version>${cobertura.maven.plugin.version}</version>
+                        <configuration>
+                            <instrumentation>
+                                <excludes>
+                                    <exclude>com/dimas/**/Main.class</exclude>
+                                </excludes>
+                            </instrumentation>
+                            <formats>
+                                <format>html</format>
+                            </formats>
+                            <aggregate>true</aggregate>
+                            <check>
+                                <haltOnFailure>${cobertura.haltOnFailure}</haltOnFailure>
+                                <branchRate>${cobertura.code.coverage.percents}</branchRate>
+                                <lineRate>${cobertura.code.coverage.percents}</lineRate>
+                                <totalBranchRate>${cobertura.code.coverage.percents}</totalBranchRate>
+                                <totalLineRate>${cobertura.code.coverage.percents}</totalLineRate>
+                            </check>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>clean</goal>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
+
+        <profile>
+            <id>functional</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${maven-surefire-plugin.version}</version>
+                        <configuration>
+                            <includes>
+                                <include>**/*FunctionalTest.java</include>
+                            </includes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
     </profiles>
 </project>
